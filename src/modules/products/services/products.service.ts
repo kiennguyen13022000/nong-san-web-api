@@ -50,6 +50,26 @@ export class ProductsService {
     return this.productModel.find({}).populate('category');
   }
 
+  async findBy(page: number, limit: number, search?: string) {
+    const searchCondition = search
+      ? { name: new RegExp(`${search}`, 'i') }
+      : {};
+    return (
+      this.productModel
+        .find({})
+        // .skip((page - 1) * limit)
+        // .limit(limit)
+        .sort('category')
+    );
+  }
+
+  async findRelatedProducts() {
+    return this.productModel
+      .find({})
+      .select('_id name category')
+      .populate('category');
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} product`;
   }

@@ -12,14 +12,21 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
+  Req,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { UploadThumbnailDto } from '../dto/upload-thumbnail.dto';
 import { UploadGalleryDto } from '../dto/upload-gallery.dto';
 import {
@@ -27,11 +34,16 @@ import {
   ThumbnailInterceptor,
 } from '../interceptors/media.interceptor';
 import { UploadDescriptionGalleryDto } from '../dto/upload-description-gallery.dto';
+import { ProductCategoriesService } from '../services/product-categories.service';
+import { DEFAULT_FACTORY_CLASS_METHOD_KEY } from '@nestjs/common/module-utils/constants';
 
 @ApiTags('[Admin] Sản phẩm')
 @Controller('admin/products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly productCategoriesService: ProductCategoriesService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -124,10 +136,42 @@ export class ProductsController {
     res.status(HttpStatus.ACCEPTED).json(response);
   }
 
-  @Get()
-  async findAll(@Res() res: Response) {
-    const products = await this.productsService.findAll();
-    const response = new ResponseData(true, products, null);
+  @Get('categories')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async findCategories(@Res() res: Response) {
+    const categories = await this.productCategoriesService.findAll();
+    const response = new ResponseData(true, categories, null);
+    res.status(HttpStatus.ACCEPTED).json(response);
+  }
+
+  @Get('related')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  // @ApiQuery({
+  //   name: 'page',
+  //   required: true,
+  // })
+  // @ApiQuery({
+  //   name: 'limit',
+  //   required: true,
+  // })
+  // @ApiQuery({
+  //   name: 'search',
+  //   required: false,
+  // })
+  async findRelatedProducts(@Req() req: Request, @Res() res: Response) {
+    // const { page, limit, search } = req.query;
+    // const _page = Number(page);
+    // const _limit = Number(limit);
+    // const related = await this.productsService.findBy(
+    //   _page,
+    //   _limit,
+    //   search?.toString(),
+    // );
+    const related = await this.productsService.findRelatedProducts();
+
+    const response = new ResponseData(true, related, null);
     res.status(HttpStatus.ACCEPTED).json(response);
   }
 

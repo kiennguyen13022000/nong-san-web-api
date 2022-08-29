@@ -8,6 +8,7 @@ import { ProductMediaSchema } from './schemas/product-media.schema';
 import { ProductMediaService } from './services/product-media.service';
 import { FilesModule } from '../files/files.module';
 import { ProductModel } from './enums/product-model.enum';
+import { ProductCategoriesService } from './services/product-categories.service';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { ProductModel } from './enums/product-model.enum';
     FilesModule,
   ],
   controllers: [ProductsController],
-  providers: [ProductsService, ProductMediaService],
+  providers: [ProductsService, ProductMediaService, ProductCategoriesService],
 })
 export class ProductsModule {}

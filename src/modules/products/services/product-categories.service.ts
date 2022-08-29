@@ -15,4 +15,8 @@ export class ProductCategoriesService {
   async create(categoryName: CreateProductCategoryDto) {
     return this.productCategoryModel.create({ name: categoryName });
   }
+
+  async findAll() {
+    return this.productCategoryModel.find({});
+  }
 }
