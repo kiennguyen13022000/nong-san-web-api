@@ -5,11 +5,13 @@ import { ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductMediaService } from './product-media.service';
+import { ProductModel } from '../enums/product-model.enum';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectModel('product') private productModel: Model<ProductDocument>,
+    @InjectModel(ProductModel.PRODUCT)
+    private productModel: Model<ProductDocument>,
     private productMediaService: ProductMediaService,
   ) {}
 

@@ -29,7 +29,7 @@ import {
 import { UploadDescriptionGalleryDto } from '../dto/upload-description-gallery.dto';
 
 @ApiTags('[Admin] Sản phẩm')
-@Controller('products')
+@Controller('admin/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

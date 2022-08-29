@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
+import { ProductModel } from '../enums/product-model.enum';
 import { ProductStatus } from '../enums/product-status.enum';
 import { ProductCategory } from './product-category.schema';
 import {
@@ -20,10 +21,16 @@ export class Product {
   @Prop()
   name: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'product-media' })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ProductModel.PRODUCT_MEDIA,
+  })
   thumbnail: ProductMedia;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'product-media' })
+  @Prop({
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: ProductModel.PRODUCT_MEDIA,
+  })
   gallery: ProductMedia[];
 
   @Prop({ type: ProductPriceSchema })
@@ -44,13 +51,16 @@ export class Product {
   @Prop({ type: ProductDescriptionSchema })
   description: ProductDescription;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'product-category' })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: ProductModel.PRODUCT_CATEGORY,
+  })
   category: ProductCategory;
 
   @Prop({ type: String, enum: Object.values(ProductStatus) })
   status: ProductStatus;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'product' })
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: ProductModel.PRODUCT })
   relatedProducts?: Product[];
 }
 

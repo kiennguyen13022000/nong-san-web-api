@@ -2,12 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FilesService } from 'src/modules/files/files.service';
+import { ProductModel } from '../enums/product-model.enum';
 import { ProductMediaDocument } from '../schemas/product-media.schema';
 
 @Injectable()
 export class ProductMediaService {
   constructor(
-    @InjectModel('product-media')
+    @InjectModel(ProductModel.PRODUCT_MEDIA)
     private productMediaModel: Model<ProductMediaDocument>,
     private filesService: FilesService,
   ) {}
