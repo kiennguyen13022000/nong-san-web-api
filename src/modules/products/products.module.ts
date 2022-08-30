@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ProductsService } from './services/products.service';
-import { ProductsController } from './controllers/admin.products.controller';
+import { AdminProductsController } from './controllers/admin.products.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProductSchema } from './schemas/product.schema';
 import { ProductCategorySchema } from './schemas/product-category.schema';
@@ -28,7 +28,7 @@ import { ProductCategoriesService } from './services/product-categories.service'
     ]),
     FilesModule,
   ],
-  controllers: [ProductsController],
+  controllers: [AdminProductsController],
   providers: [ProductsService, ProductMediaService, ProductCategoriesService],
 })
 export class ProductsModule {}

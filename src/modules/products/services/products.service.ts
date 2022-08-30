@@ -50,17 +50,14 @@ export class ProductsService {
     return this.productModel.find({}).populate('category');
   }
 
-  async findBy(page: number, limit: number, search?: string) {
-    const searchCondition = search
-      ? { name: new RegExp(`${search}`, 'i') }
-      : {};
-    return (
-      this.productModel
-        .find({})
-        // .skip((page - 1) * limit)
-        // .limit(limit)
-        .sort('category')
-    );
+  async findByPage(page: number, limit: number) {
+    const products = this.productModel
+      .find({})
+      .sort('createdAt')
+      .skip((page - 1) * limit)
+      .limit(limit);
+    const count = this.productModel.estimatedDocumentCount();
+    return Promise.all([products, count]);
   }
 
   async findRelatedProducts() {

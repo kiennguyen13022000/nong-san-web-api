@@ -35,11 +35,10 @@ import {
 } from '../interceptors/media.interceptor';
 import { UploadDescriptionGalleryDto } from '../dto/upload-description-gallery.dto';
 import { ProductCategoriesService } from '../services/product-categories.service';
-import { DEFAULT_FACTORY_CLASS_METHOD_KEY } from '@nestjs/common/module-utils/constants';
 
 @ApiTags('[Admin] Sản phẩm')
 @Controller('admin/products')
-export class ProductsController {
+export class AdminProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly productCategoriesService: ProductCategoriesService,
@@ -129,6 +128,44 @@ export class ProductsController {
         files: files.map((file) => ({
           url: file.path.replace('public', ''),
         })),
+      },
+      null,
+    );
+
+    res.status(HttpStatus.ACCEPTED).json(response);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiQuery({
+    name: 'page',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: true,
+  })
+  async findAll(@Req() req, @Res() res: Response) {
+    const { page, limit } = req.query;
+    if (isNaN(page) || isNaN(limit)) {
+      return res
+        .status(HttpStatus.FORBIDDEN)
+        .json({ message: 'Yêu cầu không hợp lệ!' });
+    }
+    const _page = Number(page);
+    const _limit = Number(limit);
+    const [products, count] = await this.productsService.findByPage(
+      _page,
+      _limit,
+    );
+    const response = new ResponseData(
+      true,
+      {
+        products,
+        count,
+        page: _page,
+        limit: _limit,
       },
       null,
     );

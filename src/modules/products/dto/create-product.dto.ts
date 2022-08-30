@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ProductMediaType } from '../enums/product-media-type.enum';
 import { ProductStatus } from '../enums/product-status.enum';
 
@@ -52,6 +53,8 @@ export class CreateProductDto {
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
+  @IsString()
   name: string;
 
   @ApiProperty(singleMediaStructure)
@@ -63,27 +66,37 @@ export class CreateProductDto {
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
+  @IsString()
   category: string;
 
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
+  @IsNumber()
   price: number;
 
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
+  @IsNumber()
   weight: number;
 
   @ApiProperty({
     required: true,
   })
+  @IsNotEmpty()
+  @IsNumber()
   quantityInStock: number;
 
   @ApiProperty({
     required: true,
     enum: Object.values(ProductStatus),
   })
+  @IsNotEmpty()
+  @IsString()
   status: string;
 
   @ApiProperty(discountsStructure)
