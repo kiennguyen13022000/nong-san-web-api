@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
@@ -47,7 +47,9 @@ export class ProductsService {
   }
 
   async findAll() {
-    return this.productModel.find({}).populate('category');
+    return this.productModel
+      .find({})
+      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
   }
 
   async findByPage(page: number, limit: number) {
@@ -55,20 +57,23 @@ export class ProductsService {
       .find({})
       .sort('createdAt')
       .skip((page - 1) * limit)
-      .limit(limit);
+      .limit(limit)
+      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
     const count = this.productModel.estimatedDocumentCount();
     return Promise.all([products, count]);
   }
 
-  async findRelatedProducts() {
+  async findAllExceptById(except: any[]) {
     return this.productModel
-      .find({})
-      .select('_id name category')
+      .find({ _id: { $nin: except } })
+      .select('_id name category thumbnail')
       .populate('category');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    return this.productModel
+      .findById(id)
+      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {

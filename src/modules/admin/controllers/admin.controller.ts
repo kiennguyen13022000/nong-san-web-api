@@ -10,8 +10,8 @@ import { LoginDto } from '../dto/login.dto';
 export class AdminController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
+  @UseGuards(LocalAuthGuard)
   @ApiBody({ type: LoginDto })
   async login(@Req() req: Request) {
     return this.authService.login(req.user);

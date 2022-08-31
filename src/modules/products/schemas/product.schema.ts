@@ -28,8 +28,12 @@ export class Product {
   thumbnail: ProductMedia;
 
   @Prop({
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: ProductModel.PRODUCT_MEDIA,
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: ProductModel.PRODUCT_MEDIA,
+      },
+    ],
   })
   gallery: ProductMedia[];
 
@@ -60,7 +64,14 @@ export class Product {
   @Prop({ type: String, enum: Object.values(ProductStatus) })
   status: ProductStatus;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: ProductModel.PRODUCT })
+  @Prop({
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: ProductModel.PRODUCT,
+      },
+    ],
+  })
   relatedProducts?: Product[];
 }
 

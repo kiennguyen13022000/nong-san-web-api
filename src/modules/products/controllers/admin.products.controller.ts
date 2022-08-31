@@ -108,36 +108,26 @@ export class AdminProductsController {
   @Get('related')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  // @ApiQuery({
-  //   name: 'page',
-  //   required: true,
-  // })
-  // @ApiQuery({
-  //   name: 'limit',
-  //   required: true,
-  // })
-  // @ApiQuery({
-  //   name: 'search',
-  //   required: false,
-  // })
-  async findRelatedProducts(@Req() req: Request, @Res() res: Response) {
-    // const { page, limit, search } = req.query;
-    // const _page = Number(page);
-    // const _limit = Number(limit);
-    // const related = await this.productsService.findBy(
-    //   _page,
-    //   _limit,
-    //   search?.toString(),
-    // );
-    const related = await this.productsService.findRelatedProducts();
-
-    const response = new ResponseData(true, related, null);
-    res.status(HttpStatus.ACCEPTED).json(response);
+  @ApiQuery({
+    name: 'except',
+    required: false,
+    isArray: true,
+  })
+  async findRelatedProducts(@Req() req, @Res() res: Response) {
+    const { except } = req.query;
+    if (except && Array.isArray(except)) {
+      const related = await this.productsService.findAllExceptById(except);
+      const response = new ResponseData(true, related, null);
+      res.status(HttpStatus.ACCEPTED).json(response);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+  async findOne(@Param('id') id: string, @Res() res: Response) {
+    const product = await this.productsService.findOne(id);
+    const response = new ResponseData(true, product, null);
+
+    res.status(HttpStatus.ACCEPTED).json(response);
   }
 
   @Patch(':id')

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
+  IsNumberString,
   IsPhoneNumber,
   IsString,
   MinLength,
@@ -12,7 +13,9 @@ export class LoginDto {
     default: '0999999999',
   })
   @IsNotEmpty()
-  @IsPhoneNumber('VN')
+  @IsPhoneNumber('VN', {
+    message: 'Tên đăng nhập phải là số điện thoại',
+  })
   username: string;
 
   @ApiProperty({
