@@ -9,24 +9,15 @@ import {
   Res,
   HttpStatus,
   UseGuards,
-  UseInterceptors,
-  UploadedFile,
-  UploadedFiles,
   Req,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
 
 @ApiTags('[Admin] Sản phẩm')
@@ -61,34 +52,35 @@ export class AdminProductsController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiQuery({
-    name: 'page',
-    required: true,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: true,
-  })
+  // @ApiQuery({
+  //   name: 'page',
+  //   required: true,
+  // })
+  // @ApiQuery({
+  //   name: 'limit',
+  //   required: true,
+  // })
   async findAll(@Req() req, @Res() res: Response) {
-    const { page, limit } = req.query;
-    if (isNaN(page) || isNaN(limit)) {
-      return res
-        .status(HttpStatus.FORBIDDEN)
-        .json({ message: 'Yêu cầu không hợp lệ!' });
-    }
-    const _page = Number(page);
-    const _limit = Number(limit);
-    const [products, count] = await this.productsService.findByPage(
-      _page,
-      _limit,
-    );
+    // const { page, limit } = req.query;
+    // if (isNaN(page) || isNaN(limit)) {
+    //   return res
+    //     .status(HttpStatus.FORBIDDEN)
+    //     .json({ message: 'Yêu cầu không hợp lệ!' });
+    // }
+    // const _page = Number(page);
+    // const _limit = Number(limit);
+    // const [products, count] = await this.productsService.findByPage(
+    //   _page,
+    //   _limit,
+    // );
+    const [products, count] = await this.productsService.findAll();
     const response = new ResponseData(
       true,
       {
         products,
-        pageCount: Math.ceil(count / _limit),
-        page: _page,
-        limit: _limit,
+        totalDocs: count,
+        // page: _page,
+        // limit: _limit,
       },
       null,
     );

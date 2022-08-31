@@ -46,6 +46,14 @@ export class ProductsService {
     return this.productModel.create(newProduct);
   }
 
+  async findAll() {
+    const products = this.productModel
+      .find({})
+      .select('_id name quantityInStock status');
+    const count = this.productModel.estimatedDocumentCount();
+    return Promise.all([products, count]);
+  }
+
   async findByPage(page: number, limit: number) {
     const products = this.productModel
       .find({})
