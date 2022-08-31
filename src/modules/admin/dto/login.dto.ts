@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
+  IsNumberString,
   IsPhoneNumber,
   IsString,
   MinLength,
