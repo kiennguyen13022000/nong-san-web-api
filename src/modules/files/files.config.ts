@@ -2,10 +2,9 @@ import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { randomBytes } from 'crypto';
-import { mediaFileFilter } from './file-filter';
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 
-export const allowExtensions = (extensions: string[]) => {
+export const allowExtensions = () => {
   const fileUploadOptions: MulterOptions = {
     storage: diskStorage({
       destination(req, file, callback) {
@@ -22,8 +21,7 @@ export const allowExtensions = (extensions: string[]) => {
         const filename = `${randomBytes(19).toString('hex')}${extension}`;
         callback(null, filename);
       },
-    }),
-    fileFilter: mediaFileFilter(...extensions),
+    })
   };
 
   return fileUploadOptions;

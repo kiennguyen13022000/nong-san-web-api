@@ -27,13 +27,6 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { UploadThumbnailDto } from '../dto/upload-thumbnail.dto';
-import { UploadGalleryDto } from '../dto/upload-gallery.dto';
-import {
-  GalleryInterceptor,
-  ThumbnailInterceptor,
-} from '../interceptors/media.interceptor';
-import { UploadDescriptionGalleryDto } from '../dto/upload-description-gallery.dto';
 import { ProductCategoriesService } from '../services/product-categories.service';
 
 @ApiTags('[Admin] Sản phẩm')
@@ -58,76 +51,6 @@ export class AdminProductsController {
       {
         message: 'Tạo sản phẩm mới thành công!',
         data: product,
-      },
-      null,
-    );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
-  }
-
-  @Post('thumbnail')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadThumbnailDto })
-  @UseInterceptors(ThumbnailInterceptor)
-  async uploadThumbnail(
-    @UploadedFile() file: Express.Multer.File,
-    @Res() res: Response,
-  ) {
-    const response = new ResponseData(
-      true,
-      {
-        message: 'Upload thumbnail thành công!',
-        url: file.path.replace('public', ''),
-      },
-      null,
-    );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
-  }
-
-  @Post('gallery')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadGalleryDto })
-  @UseInterceptors(GalleryInterceptor)
-  async uploadGallery(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Res() res: Response,
-  ) {
-    const response = new ResponseData(
-      true,
-      {
-        message: 'Upload hình ảnh và video sản phẩm thành công!',
-        files: files.map((file) => ({
-          url: file.path.replace('public', ''),
-        })),
-      },
-      null,
-    );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
-  }
-
-  @Post('description/gallery')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({ type: UploadDescriptionGalleryDto })
-  @UseInterceptors(GalleryInterceptor)
-  async uploadDescriptionGallery(
-    @UploadedFiles() files: Express.Multer.File[],
-    @Res() res: Response,
-  ) {
-    const response = new ResponseData(
-      true,
-      {
-        message: 'Upload hình ảnh và video mô tả sản phẩm thành công!',
-        files: files.map((file) => ({
-          url: file.path.replace('public', ''),
-        })),
       },
       null,
     );
