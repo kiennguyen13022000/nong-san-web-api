@@ -15,7 +15,7 @@ import { LocalStrategy } from './local.strategy';
     JwtModule.register({
       secret: process.env.ACCESS_KEY,
       signOptions: {
-        expiresIn: '2h',
+        expiresIn: '20h',
       },
     }),
   ],

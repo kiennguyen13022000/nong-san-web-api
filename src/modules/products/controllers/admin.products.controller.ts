@@ -86,7 +86,7 @@ export class AdminProductsController {
       true,
       {
         products,
-        count,
+        pageCount: Math.ceil(count / _limit),
         page: _page,
         limit: _limit,
       },
@@ -131,8 +131,11 @@ export class AdminProductsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return await this.productsService.findAndUpdate(id, updateProductDto);
   }
 
   @Delete(':id')

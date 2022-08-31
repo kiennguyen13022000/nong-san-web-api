@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 import { ProductMediaType } from '../enums/product-media-type.enum';
 import { ProductStatus } from '../enums/product-status.enum';
 
@@ -96,8 +96,8 @@ export class CreateProductDto {
     enum: Object.values(ProductStatus),
   })
   @IsNotEmpty()
-  @IsString()
-  status: string;
+  @IsEnum(Object.values(ProductStatus))
+  status: ProductStatus;
 
   @ApiProperty(discountsStructure)
   discounts?: any[];

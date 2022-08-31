@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
@@ -46,12 +46,6 @@ export class ProductsService {
     return this.productModel.create(newProduct);
   }
 
-  async findAll() {
-    return this.productModel
-      .find({})
-      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
-  }
-
   async findByPage(page: number, limit: number) {
     const products = this.productModel
       .find({})
@@ -76,8 +70,8 @@ export class ProductsService {
       .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
+    return this.productModel.findByIdAndUpdate(id, updateProductDto);
   }
 
   remove(id: number) {
