@@ -21,7 +21,7 @@ export const allowExtensions = () => {
         const filename = `${randomBytes(19).toString('hex')}${extension}`;
         callback(null, filename);
       },
-    })
+    }),
   };
 
   return fileUploadOptions;
