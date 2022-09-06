@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsEnum,
   IsNotEmpty,
   IsNumber,
@@ -9,7 +10,7 @@ import {
 } from 'class-validator';
 import { ProductStatus } from '../enums/product-status.enum';
 
-class ProductMediaDto {
+export class ProductMediaDto {
   @ApiProperty()
   type: string;
 
@@ -21,7 +22,7 @@ class ProductMediaDto {
   _id?: string;
 }
 
-class ProductDiscountDto {
+export class ProductDiscountDto {
   @ApiProperty()
   percentOff: number;
 
@@ -32,11 +33,12 @@ class ProductDiscountDto {
   lastsFor: number;
 }
 
-class ProductDescriptionDto {
+export class ProductDescriptionDto {
   @ApiProperty()
   content: string;
 
   @ApiProperty({ type: () => [ProductMediaDto] })
+  @ValidateNested()
   gallery: ProductMediaDto[];
 }
 
@@ -48,11 +50,13 @@ export class CreateProductDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ type: () => ProductMediaDto })
+  @ApiProperty({ type: () => ProductMediaDto, required: true })
   @ValidateNested()
   thumbnail: ProductMediaDto;
 
-  @ApiProperty({ type: () => [ProductMediaDto] })
+  @ApiProperty({ type: () => [ProductMediaDto], required: true })
+  @IsArray()
+  @ValidateNested()
   gallery: ProductMediaDto[];
 
   @ApiProperty({
@@ -92,121 +96,16 @@ export class CreateProductDto {
   status: ProductStatus;
 
   @ApiProperty({ type: () => [ProductDiscountDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
   discounts?: ProductDiscountDto[];
 
-  @ApiProperty({ type: () => ProductDescriptionDto })
+  @ApiProperty({ type: () => ProductDescriptionDto, required: true })
+  @ValidateNested()
   description: ProductDescriptionDto;
 
   @ApiProperty()
+  @IsArray()
   relatedProducts: string[];
 }
-// import { ApiProperty } from '@nestjs/swagger';
-// import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-// import { ProductMediaType } from '../enums/product-media-type.enum';
-// import { ProductStatus } from '../enums/product-status.enum';
-
-// const singleMediaStructure = {
-//   type: 'object',
-//   properties: {
-//     url: {
-//       type: 'string',
-//     },
-//     type: {
-//       type: 'string',
-//       enum: Object.values(ProductMediaType),
-//     },
-//   },
-// };
-
-// const galleryStructure = {
-//   type: 'array',
-//   items: singleMediaStructure,
-// };
-
-// const descriptionStructure = {
-//   type: 'object',
-//   properties: {
-//     content: {
-//       type: 'string',
-//     },
-//     gallery: galleryStructure,
-//   },
-// };
-
-// const discountsStructure = {
-//   type: 'array',
-//   items: {
-//     type: 'object',
-//     properties: {
-//       percentOff: {
-//         type: 'number',
-//       },
-//       quantity: {
-//         type: 'number',
-//       },
-//       lastsFor: {
-//         type: 'number',
-//       },
-//     },
-//   },
-// };
-
-// export class CreateProductDto {
-//   @ApiProperty({
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsString()
-//   name: string;
-
-//   @ApiProperty(singleMediaStructure)
-//   thumbnail: any;
-
-//   @ApiProperty(galleryStructure)
-//   gallery: any[];
-
-//   @ApiProperty({
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsString()
-//   category: string;
-
-//   @ApiProperty({
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsNumber()
-//   price: number;
-
-//   @ApiProperty({
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsNumber()
-//   weight: number;
-
-//   @ApiProperty({
-//     required: true,
-//   })
-//   @IsNotEmpty()
-//   @IsNumber()
-//   quantityInStock: number;
-
-//   @ApiProperty({
-//     required: true,
-//     enum: Object.values(ProductStatus),
-//   })
-//   @IsNotEmpty()
-//   @IsEnum(Object.values(ProductStatus))
-//   status: ProductStatus;
-
-//   @ApiProperty(discountsStructure)
-//   discounts?: any[];
-
-//   @ApiProperty(descriptionStructure)
-//   description: any;
-
-//   @ApiProperty()
-//   relatedProducts: string[];
-// }

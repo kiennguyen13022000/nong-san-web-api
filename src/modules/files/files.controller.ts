@@ -42,7 +42,7 @@ export class FilesController {
       {
         message: 'Upload thành công',
         data: {
-          path: file.path,
+          path: file.path.replace('public', ''),
         },
       },
       null,
@@ -65,7 +65,7 @@ export class FilesController {
   uploadMultiple(@UploadedFiles() files: Express.Multer.File[]) {
     const paths = [];
     files.forEach((file, index) => {
-      paths[index] = file.path;
+      paths[index] = file.path.replace('public', '');
     });
 
     return new ResponseData(

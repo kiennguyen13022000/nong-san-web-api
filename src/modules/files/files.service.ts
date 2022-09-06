@@ -1,16 +1,42 @@
-import { Injectable } from '@nestjs/common';
-import { copyFileSync, existsSync, mkdirSync } from 'fs';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { existsSync, mkdirSync } from 'fs';
+import { copyFile, rm } from 'fs/promises';
 import { basename, join } from 'path';
-import * as fs from 'fs';
 
 @Injectable()
 export class FilesService {
-  copy(from: string, to: string) {
+  // copy(file: string, to: string) {
+  //   try {
+  //     const filename = basename(file);
+  //     const srcPath = join('public', file);
+  //     if (!existsSync(srcPath)) {
+  //       return;
+  //     }
+
+  //     const destPath = join('public', to);
+  //     if (!existsSync(destPath)) {
+  //       mkdirSync(destPath, { recursive: true });
+  //     }
+
+  //     const destFullPath = join(destPath, filename);
+  //     copyFileSync(srcPath, destFullPath);
+  //     return destFullPath.replace('public', '');
+  //   } catch (error) {
+  //     throw new Error(error?.message);
+  //   }
+  // }
+
+  async copy(file: string, to: string) {
     try {
-      const filename = basename(from);
-      const srcPath = join('public', from);
+      const filename = basename(file);
+      const srcPath = join('public', file);
       if (!existsSync(srcPath)) {
-        return;
+        throw new HttpException(
+          {
+            message: 'Copy file thất bại',
+          },
+          HttpStatus.NOT_FOUND,
+        );
       }
 
       const destPath = join('public', to);
@@ -19,33 +45,42 @@ export class FilesService {
       }
 
       const destFullPath = join(destPath, filename);
-      copyFileSync(srcPath, destFullPath);
+      await copyFile(srcPath, destFullPath);
       return destFullPath.replace('public', '');
     } catch (error) {
-      return;
+      throw new HttpException(
+        {
+          error: 'Copy file thất bại',
+        },
+        HttpStatus.NOT_FOUND,
+      );
     }
   }
 
-  delete(path: string) {
-      if (!fs.existsSync('public/tmp/2022731/0eddc9c11726f1dcc790629e09f1c55d8e8973.png')) {
-         throw new Error('Đường dẫn không tồn tại');
+  async delete(file: string) {
+    try {
+      const path = join('public', file);
+      if (!existsSync(path)) {
+        throw new HttpException(
+          {
+            error: 'Xóa file thất bại',
+          },
+          HttpStatus.NOT_FOUND,
+        );
       }
 
-      fs.unlink(path, function (err) {
-         if (err) throw err;
-      });
+      await rm(path);
+    } catch (error) {
+      throw new HttpException(
+        {
+          error: 'Xóa file thất bại',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  deleteMultiple(paths: Array<string>) {
-      paths.forEach(path => {
-         if (!fs.existsSync(path)) {
-            throw new Error('Đường dẫn không tồn tại');
-         }
-   
-         fs.unlink(path, function (err) {
-            if (err) throw err;
-         });
-      });
+  async deleteMultiple(files: string[]) {
+    await Promise.all(files.map(async (file) => await this.delete(file)));
   }
-  
 }

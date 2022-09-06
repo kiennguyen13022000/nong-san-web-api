@@ -74,7 +74,7 @@ export class ProductsService {
     } = updateProductDto;
 
     const [thumbnail, productGallery, descriptionGallery] =
-      await this.productMediaService.addIfNotExist(
+      await this.productMediaService.createIfNotExist(
         updatedThumbnail,
         updatedProductGallery,
         updatedDescriptionGallery,
@@ -99,9 +99,5 @@ export class ProductsService {
 
   async remove(id: string) {
     return this.productModel.findByIdAndRemove(id);
-  }
-
-  private isNewMedia(file: any) {
-    return file.url.includes('tmp');
   }
 }

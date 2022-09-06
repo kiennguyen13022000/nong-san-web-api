@@ -74,8 +74,6 @@ export class AdminProductsController {
   }
 
   @Get('related')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiQuery({
     name: 'except',
     required: false,
@@ -83,7 +81,6 @@ export class AdminProductsController {
   })
   async findRelatedProducts(
     @Query('except') except: string[],
-    @Req() req,
     @Res() res: Response,
   ) {
     const related = await this.productsService.findAllExceptById(except);
@@ -99,23 +96,11 @@ export class AdminProductsController {
     res.status(HttpStatus.ACCEPTED).json(response);
   }
 
-  // @Patch(':id')
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateProductDto: UpdateProductDto,
-  // ) {
-  //   await this.productsService.findAndUpdate(id, updateProductDto);
-  //   const product = await this.productsService.findOne(id);
-  //   const response = new ResponseData(true, product, null);
-  //   return response;
-  // }
-
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    console.log('update');
     await this.productsService.findAndUpdate(id, updateProductDto);
     const product = await this.productsService.findOne(id);
     const response = new ResponseData(true, product, null);
