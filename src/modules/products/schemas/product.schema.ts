@@ -12,7 +12,6 @@ import {
   ProductDiscountSchema,
 } from './product-discount.schema';
 import { ProductMedia } from './product-media.schema';
-import { ProductPrice, ProductPriceSchema } from './product-price.schema';
 
 export type ProductDocument = Product & mongoose.Document;
 
@@ -37,8 +36,8 @@ export class Product {
   })
   gallery: ProductMedia[];
 
-  @Prop({ type: ProductPriceSchema })
-  price: ProductPrice;
+  @Prop()
+  price: number;
 
   @Prop()
   quantityInStock: number;

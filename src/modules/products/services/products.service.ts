@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
@@ -19,7 +19,6 @@ export class ProductsService {
     const {
       thumbnail: tmpThumbnail,
       gallery: tmpProductGallery,
-      price: original,
       description: { gallery: tmpDescriptionGallery },
     } = createProductDto;
 
@@ -34,9 +33,6 @@ export class ProductsService {
       ...createProductDto,
       thumbnail,
       gallery: productGallery,
-      price: {
-        original,
-      },
       description: {
         ...createProductDto.description,
         gallery: descriptionGallery,
@@ -49,17 +45,7 @@ export class ProductsService {
   async findAll() {
     const products = this.productModel
       .find({})
-      .select('_id name quantityInStock status');
-    const count = this.productModel.estimatedDocumentCount();
-    return Promise.all([products, count]);
-  }
-
-  async findByPage(page: number, limit: number) {
-    const products = this.productModel
-      .find({})
       .sort('createdAt')
-      .skip((page - 1) * limit)
-      .limit(limit)
       .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
     const count = this.productModel.estimatedDocumentCount();
     return Promise.all([products, count]);
@@ -79,10 +65,43 @@ export class ProductsService {
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
-    return this.productModel.findByIdAndUpdate(id, updateProductDto);
+    const {
+      thumbnail: updatedThumbnail,
+      gallery: updatedProductGallery,
+      description: { gallery: updatedDescriptionGallery },
+      removeMedia,
+      ...rest
+    } = updateProductDto;
+
+    const [thumbnail, productGallery, descriptionGallery] =
+      await this.productMediaService.addIfNotExist(
+        updatedThumbnail,
+        updatedProductGallery,
+        updatedDescriptionGallery,
+      );
+
+    if (removeMedia && removeMedia.length > 0) {
+      await this.productMediaService.removeMedia(removeMedia);
+    }
+
+    const updatedProduct = {
+      ...rest,
+      thumbnail,
+      gallery: productGallery,
+      description: {
+        ...updateProductDto.description,
+        gallery: descriptionGallery,
+      },
+    };
+
+    return this.productModel.findByIdAndUpdate(id, updatedProduct);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    return this.productModel.findByIdAndRemove(id);
+  }
+
+  private isNewMedia(file: any) {
+    return file.url.includes('tmp');
   }
 }

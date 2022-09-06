@@ -36,7 +36,7 @@ export class FilesController {
   })
   @ApiCreatedResponse({ description: 'Thực hiện thành công' })
   @ApiBadRequestResponse({ description: 'Yêu cầu không thành công' })
-  upload(@UploadedFile() file) {
+  upload(@UploadedFile() file: Express.Multer.File) {
     return new ResponseData(
       true,
       {
@@ -62,7 +62,7 @@ export class FilesController {
   @ApiCreatedResponse({ description: 'Thực hiện thành công' })
   @ApiBadRequestResponse({ description: 'Yêu cầu không thành công' })
   @Post('multiple-upload')
-  uploadMultiple(@UploadedFiles() files: Array<Express.Multer.File>) {
+  uploadMultiple(@UploadedFiles() files: Express.Multer.File[]) {
     const paths = [];
     files.forEach((file, index) => {
       paths[index] = file.path;

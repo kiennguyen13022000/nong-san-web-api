@@ -10,6 +10,8 @@ import {
   HttpStatus,
   UseGuards,
   Req,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
@@ -21,6 +23,8 @@ import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
 
 @ApiTags('[Admin] Sản phẩm')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('admin/products')
 export class AdminProductsController {
   constructor(
@@ -29,8 +33,6 @@ export class AdminProductsController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiBody({ type: CreateProductDto })
   async create(
     @Body() createProductDto: CreateProductDto,
@@ -50,37 +52,13 @@ export class AdminProductsController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  // @ApiQuery({
-  //   name: 'page',
-  //   required: true,
-  // })
-  // @ApiQuery({
-  //   name: 'limit',
-  //   required: true,
-  // })
-  async findAll(@Req() req, @Res() res: Response) {
-    // const { page, limit } = req.query;
-    // if (isNaN(page) || isNaN(limit)) {
-    //   return res
-    //     .status(HttpStatus.FORBIDDEN)
-    //     .json({ message: 'Yêu cầu không hợp lệ!' });
-    // }
-    // const _page = Number(page);
-    // const _limit = Number(limit);
-    // const [products, count] = await this.productsService.findByPage(
-    //   _page,
-    //   _limit,
-    // );
+  async findAll(@Res() res: Response) {
     const [products, count] = await this.productsService.findAll();
     const response = new ResponseData(
       true,
       {
         products,
         totalDocs: count,
-        // page: _page,
-        // limit: _limit,
       },
       null,
     );
@@ -89,8 +67,6 @@ export class AdminProductsController {
   }
 
   @Get('categories')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   async findCategories(@Res() res: Response) {
     const categories = await this.productCategoriesService.findAll();
     const response = new ResponseData(true, categories, null);
@@ -105,13 +81,14 @@ export class AdminProductsController {
     required: false,
     isArray: true,
   })
-  async findRelatedProducts(@Req() req, @Res() res: Response) {
-    const { except } = req.query;
-    if (except && Array.isArray(except)) {
-      const related = await this.productsService.findAllExceptById(except);
-      const response = new ResponseData(true, related, null);
-      res.status(HttpStatus.ACCEPTED).json(response);
-    }
+  async findRelatedProducts(
+    @Query('except') except: string[],
+    @Req() req,
+    @Res() res: Response,
+  ) {
+    const related = await this.productsService.findAllExceptById(except);
+    const response = new ResponseData(true, related, null);
+    res.status(HttpStatus.ACCEPTED).json(response);
   }
 
   @Get(':id')
@@ -122,16 +99,40 @@ export class AdminProductsController {
     res.status(HttpStatus.ACCEPTED).json(response);
   }
 
-  @Patch(':id')
+  // @Patch(':id')
+  // async update(
+  //   @Param('id') id: string,
+  //   @Body() updateProductDto: UpdateProductDto,
+  // ) {
+  //   await this.productsService.findAndUpdate(id, updateProductDto);
+  //   const product = await this.productsService.findOne(id);
+  //   const response = new ResponseData(true, product, null);
+  //   return response;
+  // }
+
+  @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    return await this.productsService.findAndUpdate(id, updateProductDto);
+    console.log('update');
+    await this.productsService.findAndUpdate(id, updateProductDto);
+    const product = await this.productsService.findOne(id);
+    const response = new ResponseData(true, product, null);
+    return response;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    await this.productsService.remove(id);
+    const response = new ResponseData(
+      true,
+      {
+        message: 'Xóa sản phẩm thành công!',
+      },
+      null,
+    );
+
+    res.status(HttpStatus.ACCEPTED).json(response);
   }
 }
