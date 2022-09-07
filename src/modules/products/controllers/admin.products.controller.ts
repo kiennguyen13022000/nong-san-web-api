@@ -55,7 +55,10 @@ export class AdminProductsController {
 
   @Get()
   async findAll(@Res() res: Response) {
-    const [products, count] = await this.productsService.findAll();
+    const [products, count] = await Promise.all([
+      this.productsService.findAll(),
+      this.productsService.count(),
+    ]);
     const response = new ResponseData(
       true,
       {
@@ -76,16 +79,8 @@ export class AdminProductsController {
   }
 
   @Get('related')
-  @ApiQuery({
-    name: 'except',
-    required: false,
-    isArray: true,
-  })
-  async findRelatedProducts(
-    @Query('except') except: string[],
-    @Res() res: Response,
-  ) {
-    const related = await this.productsService.findAllExceptById(except);
+  async findRelatedProducts(@Res() res: Response) {
+    const related = await this.productsService.findAll();
     const response = new ResponseData(true, related, null);
     res.status(HttpStatus.ACCEPTED).json(response);
   }
@@ -94,16 +89,16 @@ export class AdminProductsController {
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const product = await this.productsService.findOne(id);
     if (!existsSync(join('public', product.thumbnail.url))) {
-      product.thumbnail.url = 'public/No_Image_Available.jpg';
+      product.thumbnail.url = 'No_Image_Available.jpg';
     }
     for (const media of product.gallery) {
       if (!existsSync(join('public', media.url))) {
-        media.url = 'public/No_Image_Available.jpg';
+        media.url = 'No_Image_Available.jpg';
       }
     }
     for (const media of product.description.gallery) {
       if (!existsSync(join('public', media.url))) {
-        media.url = 'public/No_Image_Available.jpg';
+        media.url = 'No_Image_Available.jpg';
       }
     }
     const response = new ResponseData(true, product, null);

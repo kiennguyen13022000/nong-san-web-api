@@ -15,37 +15,6 @@ export class ProductMediaService {
     private filesService: FilesService,
   ) {}
 
-  async create(
-    tmpThumbnail: any,
-    tmpProductGallery: any[],
-    tmpDescriptionGallery: any[],
-  ) {
-    const thumbnail = {
-      ...tmpThumbnail,
-      url: this.filesService.copy(tmpThumbnail.url, this.uploadDir),
-    };
-    const productGallery = tmpProductGallery.map((tmp) => ({
-      ...tmp,
-      url: this.filesService.copy(tmp.url, this.uploadDir),
-    }));
-    const descriptionGallery = tmpDescriptionGallery.map((tmp) => ({
-      ...tmp,
-      url: this.filesService.copy(tmp.url, this.uploadDir),
-    }));
-
-    const result = await Promise.all([
-      this.productMediaModel.create(thumbnail),
-      this.productMediaModel.create(productGallery),
-      this.productMediaModel.create(descriptionGallery),
-    ]);
-
-    return {
-      thumbnail: result[0]._id,
-      productGallery: result[1].map((doc) => doc._id),
-      descriptionGallery: result[2].map((doc) => doc._id),
-    };
-  }
-
   async removeMedia(toRemove: ProductMediaDto[]) {
     return await Promise.all([
       this.productMediaModel.deleteMany({

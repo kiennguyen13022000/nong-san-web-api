@@ -22,12 +22,6 @@ export class ProductsService {
       description: { gallery: tmpDescriptionGallery },
     } = createProductDto;
 
-    // const { thumbnail, productGallery, descriptionGallery } =
-    //   await this.productMediaService.create(
-    //     tmpThumbnail,
-    //     tmpProductGallery,
-    //     tmpDescriptionGallery,
-    //   );
     const [thumbnail, productGallery, descriptionGallery] =
       await this.productMediaService.createIfNotExist(
         tmpThumbnail,
@@ -49,12 +43,14 @@ export class ProductsService {
   }
 
   async findAll() {
-    const products = this.productModel
+    return this.productModel
       .find({})
       .select('_id name quantityInStock status')
       .sort('createdAt');
-    const count = this.productModel.estimatedDocumentCount();
-    return await Promise.all([products, count]);
+  }
+
+  async count() {
+    return this.productModel.estimatedDocumentCount();
   }
 
   async findAllExceptById(except: any[]) {

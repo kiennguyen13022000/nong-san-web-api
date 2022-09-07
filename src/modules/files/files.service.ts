@@ -5,27 +5,6 @@ import { basename, join } from 'path';
 
 @Injectable()
 export class FilesService {
-  // copy(file: string, to: string) {
-  //   try {
-  //     const filename = basename(file);
-  //     const srcPath = join('public', file);
-  //     if (!existsSync(srcPath)) {
-  //       return;
-  //     }
-
-  //     const destPath = join('public', to);
-  //     if (!existsSync(destPath)) {
-  //       mkdirSync(destPath, { recursive: true });
-  //     }
-
-  //     const destFullPath = join(destPath, filename);
-  //     copyFileSync(srcPath, destFullPath);
-  //     return destFullPath.replace('public', '');
-  //   } catch (error) {
-  //     throw new Error(error?.message);
-  //   }
-  // }
-
   async copy(file: string, to: string) {
     try {
       const filename = basename(file);
