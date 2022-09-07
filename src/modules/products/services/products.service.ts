@@ -22,8 +22,14 @@ export class ProductsService {
       description: { gallery: tmpDescriptionGallery },
     } = createProductDto;
 
-    const { thumbnail, productGallery, descriptionGallery } =
-      await this.productMediaService.create(
+    // const { thumbnail, productGallery, descriptionGallery } =
+    //   await this.productMediaService.create(
+    //     tmpThumbnail,
+    //     tmpProductGallery,
+    //     tmpDescriptionGallery,
+    //   );
+    const [thumbnail, productGallery, descriptionGallery] =
+      await this.productMediaService.createIfNotExist(
         tmpThumbnail,
         tmpProductGallery,
         tmpDescriptionGallery,
@@ -45,17 +51,18 @@ export class ProductsService {
   async findAll() {
     const products = this.productModel
       .find({})
-      .sort('createdAt')
-      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
+      .select('_id name quantityInStock status')
+      .sort('createdAt');
     const count = this.productModel.estimatedDocumentCount();
-    return Promise.all([products, count]);
+    return await Promise.all([products, count]);
   }
 
   async findAllExceptById(except: any[]) {
     return this.productModel
       .find({ _id: { $nin: except } })
       .select('_id name category thumbnail')
-      .populate('category');
+      .populate('category')
+      .lean();
   }
 
   async findOne(id: string) {
