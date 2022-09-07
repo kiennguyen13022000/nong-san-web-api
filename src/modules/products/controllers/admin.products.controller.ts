@@ -21,6 +21,8 @@ import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 @ApiTags('[Admin] Sản phẩm')
 @UseGuards(JwtAuthGuard)
@@ -91,6 +93,19 @@ export class AdminProductsController {
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const product = await this.productsService.findOne(id);
+    if (!existsSync(join('public', product.thumbnail.url))) {
+      product.thumbnail.url = 'public/No_Image_Available.jpg';
+    }
+    for (const media of product.gallery) {
+      if (!existsSync(join('public', media.url))) {
+        media.url = 'public/No_Image_Available.jpg';
+      }
+    }
+    for (const media of product.description.gallery) {
+      if (!existsSync(join('public', media.url))) {
+        media.url = 'public/No_Image_Available.jpg';
+      }
+    }
     const response = new ResponseData(true, product, null);
 
     res.status(HttpStatus.ACCEPTED).json(response);
