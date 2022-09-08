@@ -6,6 +6,8 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductMediaService } from './product-media.service';
 import { ProductModel } from '../enums/product-model.enum';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -62,9 +64,25 @@ export class ProductsService {
   }
 
   async findOne(id: string) {
-    return this.productModel
+    const product = await this.productModel
       .findById(id)
       .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
+
+    if (!existsSync(join('public', product.thumbnail?.url))) {
+      product.thumbnail.url = 'No_Image_Available.jpg';
+    }
+    for (const media of product.gallery) {
+      if (!existsSync(join('public', media?.url))) {
+        media.url = 'No_Image_Available.jpg';
+      }
+    }
+    for (const media of product.description.gallery) {
+      if (!existsSync(join('public', media?.url))) {
+        media.url = 'No_Image_Available.jpg';
+      }
+    }
+
+    return product;
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {

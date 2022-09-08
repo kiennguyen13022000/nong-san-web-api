@@ -88,21 +88,7 @@ export class AdminProductsController {
   @Get(':id')
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const product = await this.productsService.findOne(id);
-    if (!existsSync(join('public', product.thumbnail.url))) {
-      product.thumbnail.url = 'No_Image_Available.jpg';
-    }
-    for (const media of product.gallery) {
-      if (!existsSync(join('public', media.url))) {
-        media.url = 'No_Image_Available.jpg';
-      }
-    }
-    for (const media of product.description.gallery) {
-      if (!existsSync(join('public', media.url))) {
-        media.url = 'No_Image_Available.jpg';
-      }
-    }
     const response = new ResponseData(true, product, null);
-
     res.status(HttpStatus.ACCEPTED).json(response);
   }
 
