@@ -51,25 +51,21 @@ export class ProductsService {
       .find({})
       .select('_id name quantityInStock status')
       .sort('createdAt')
-      .populate(['status']);
+      .populate(['status'])
+      .lean();
 
     return products.map((product) => ({
       ...product,
-      status: this.productStatusService.translate(product.status.name),
+      status: {
+        ...product.status,
+        name: this.productStatusService.translate(product.status.name),
+      },
     }));
   }
 
   async count() {
     return this.productModel.estimatedDocumentCount();
   }
-
-  // async findAllExceptById(except: any[]) {
-  //   return this.productModel
-  //     .find({ _id: { $nin: except } })
-  //     .select('_id name category thumbnail')
-  //     .populate('category')
-  //     .lean();
-  // }
 
   async findOne(id: string) {
     const product = await this.productModel
@@ -80,7 +76,8 @@ export class ProductsService {
         'gallery',
         'description.gallery',
         'status',
-      ]);
+      ])
+      .lean();
 
     if (!existsSync(join('public', product.thumbnail?.url))) {
       product.thumbnail.url = 'No_Image_Available.jpg';
@@ -98,7 +95,10 @@ export class ProductsService {
 
     return {
       ...product,
-      status: this.productStatusService.translate(product.status.name),
+      status: {
+        ...product.status,
+        name: this.productStatusService.translate(product.status.name),
+      },
     };
   }
 
@@ -150,7 +150,10 @@ export class ProductsService {
 
     return products.map((product) => ({
       ...product,
-      status: this.productStatusService.translate(product.status.name),
+      status: {
+        ...product.status,
+        name: this.productStatusService.translate(product.status.name),
+      },
     }));
   }
 }
