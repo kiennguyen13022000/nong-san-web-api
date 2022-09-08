@@ -3,14 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FilesService } from 'src/modules/files/files.service';
 import { ProductMediaDto } from '../dto/create-product.dto';
-import { ProductModel } from '../enums/product-model.enum';
+import { EProductModel } from '../enums/product-model.enum';
 import { ProductMediaDocument } from '../schemas/product-media.schema';
 
 @Injectable()
 export class ProductMediaService {
   private uploadDir = 'uploads';
   constructor(
-    @InjectModel(ProductModel.PRODUCT_MEDIA)
+    @InjectModel(EProductModel.PRODUCT_MEDIA)
     private productMediaModel: Model<ProductMediaDocument>,
     private filesService: FilesService,
   ) {}

@@ -1,20 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product, ProductDocument } from '../schemas/product.schema';
+import { ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductMediaService } from './product-media.service';
-import { ProductModel } from '../enums/product-model.enum';
+import { EProductModel } from '../enums/product-model.enum';
 import { existsSync } from 'fs';
 import { join } from 'path';
+import { EProductStatus } from '../enums/product-status.enum';
+import { ProductStatusService } from './product-status.service';
 
 @Injectable()
 export class ProductsService {
   constructor(
-    @InjectModel(ProductModel.PRODUCT)
+    @InjectModel(EProductModel.PRODUCT)
     private productModel: Model<ProductDocument>,
     private productMediaService: ProductMediaService,
+    private productStatusService: ProductStatusService,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -45,28 +48,40 @@ export class ProductsService {
   }
 
   async findAll() {
-    return this.productModel
+    const products = await this.productModel
       .find({})
       .select('_id name quantityInStock status')
-      .sort('createdAt');
+      .sort('createdAt')
+      .populate(['status']);
+
+    return products.map((product) => ({
+      ...product,
+      status: this.productStatusService.translate(product.status.name),
+    }));
   }
 
   async count() {
     return this.productModel.estimatedDocumentCount();
   }
 
-  async findAllExceptById(except: any[]) {
-    return this.productModel
-      .find({ _id: { $nin: except } })
-      .select('_id name category thumbnail')
-      .populate('category')
-      .lean();
-  }
+  // async findAllExceptById(except: any[]) {
+  //   return this.productModel
+  //     .find({ _id: { $nin: except } })
+  //     .select('_id name category thumbnail')
+  //     .populate('category')
+  //     .lean();
+  // }
 
   async findOne(id: string) {
     const product = await this.productModel
       .findById(id)
-      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
+      .populate([
+        'thumbnail',
+        'category',
+        'gallery',
+        'description.gallery',
+        'status',
+      ]);
 
     if (!existsSync(join('public', product.thumbnail?.url))) {
       product.thumbnail.url = 'No_Image_Available.jpg';
@@ -82,7 +97,10 @@ export class ProductsService {
       }
     }
 
-    return product;
+    return {
+      ...product,
+      status: this.productStatusService.translate(product.status.name),
+    };
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
@@ -122,13 +140,18 @@ export class ProductsService {
     return this.productModel.findByIdAndRemove(id);
   }
 
-  private isNewMedia(file: any) {
-    return file.url.includes('tmp');
-  }
+  async getProductListByStatus(status: string) {
+    const products = await this.productModel
+      .find({ status })
+      .sort('createdAt')
+      .select(
+        '_id name thumbnail weight price status quantitySold quantityInStock',
+      )
+      .populate(['thumbnail', 'status']);
 
-  getProductListByStatus(status: string) {
-    return this.productModel.find({status: status})
-              .sort('createdAt')
-              .populate(['thumbnail', 'category']).exec();
+    return products.map((product) => ({
+      ...product,
+      status: this.productStatusService.translate(product.status.name),
+    }));
   }
 }

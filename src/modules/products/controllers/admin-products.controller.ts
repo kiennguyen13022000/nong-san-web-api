@@ -3,26 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
-  Res,
-  HttpStatus,
   UseGuards,
-  Req,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import { Response } from 'express';
 import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
-import { existsSync } from 'fs';
-import { join } from 'path';
 
 @ApiTags('[Admin] Sản phẩm')
 @UseGuards(JwtAuthGuard)
@@ -36,12 +28,9 @@ export class AdminProductsController {
 
   @Post()
   @ApiBody({ type: CreateProductDto })
-  async create(
-    @Body() createProductDto: CreateProductDto,
-    @Res() res: Response,
-  ) {
+  async create(@Body() createProductDto: CreateProductDto) {
     const product = await this.productsService.create(createProductDto);
-    const response = new ResponseData(
+    return new ResponseData(
       true,
       {
         message: 'Tạo sản phẩm mới thành công!',
@@ -49,17 +38,15 @@ export class AdminProductsController {
       },
       null,
     );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
   }
 
   @Get()
-  async findAll(@Res() res: Response) {
+  async findAll() {
     const [products, count] = await Promise.all([
       this.productsService.findAll(),
       this.productsService.count(),
     ]);
-    const response = new ResponseData(
+    return new ResponseData(
       true,
       {
         products,
@@ -67,29 +54,24 @@ export class AdminProductsController {
       },
       null,
     );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
   }
 
   @Get('categories')
-  async findCategories(@Res() res: Response) {
+  async findCategories() {
     const categories = await this.productCategoriesService.findAll();
-    const response = new ResponseData(true, categories, null);
-    res.status(HttpStatus.ACCEPTED).json(response);
+    return new ResponseData(true, categories, null);
   }
 
   @Get('related')
-  async findRelatedProducts(@Res() res: Response) {
+  async findRelatedProducts() {
     const related = await this.productsService.findAll();
-    const response = new ResponseData(true, related, null);
-    res.status(HttpStatus.ACCEPTED).json(response);
+    return new ResponseData(true, related, null);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
+  async findOne(@Param('id') id: string) {
     const product = await this.productsService.findOne(id);
-    const response = new ResponseData(true, product, null);
-    res.status(HttpStatus.ACCEPTED).json(response);
+    return new ResponseData(true, product, null);
   }
 
   @Put(':id')
@@ -99,21 +81,18 @@ export class AdminProductsController {
   ) {
     await this.productsService.findAndUpdate(id, updateProductDto);
     const product = await this.productsService.findOne(id);
-    const response = new ResponseData(true, product, null);
-    return response;
+    return new ResponseData(true, product, null);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string, @Res() res: Response) {
+  async remove(@Param('id') id: string) {
     await this.productsService.remove(id);
-    const response = new ResponseData(
+    return new ResponseData(
       true,
       {
         message: 'Xóa sản phẩm thành công!',
       },
       null,
     );
-
-    res.status(HttpStatus.ACCEPTED).json(response);
   }
 }

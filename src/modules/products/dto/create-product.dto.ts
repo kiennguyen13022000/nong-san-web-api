@@ -1,14 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { ProductStatus } from '../enums/product-status.enum';
 
 export class ProductMediaDto {
   @ApiProperty()
@@ -38,8 +36,9 @@ export class ProductDescriptionDto {
   content: string;
 
   @ApiProperty({ type: () => [ProductMediaDto] })
-  @ValidateNested()
-  gallery: ProductMediaDto[];
+  @IsOptional()
+  @IsArray()
+  gallery?: ProductMediaDto[];
 }
 
 export class CreateProductDto {
@@ -89,11 +88,9 @@ export class CreateProductDto {
 
   @ApiProperty({
     required: true,
-    enum: Object.values(ProductStatus),
   })
   @IsNotEmpty()
-  @IsEnum(Object.values(ProductStatus))
-  status: ProductStatus;
+  status: string;
 
   @ApiProperty({ type: () => [ProductDiscountDto] })
   @IsOptional()
@@ -106,6 +103,7 @@ export class CreateProductDto {
   description: ProductDescriptionDto;
 
   @ApiProperty()
+  @IsOptional()
   @IsArray()
-  relatedProducts: string[];
+  relatedProducts?: string[];
 }

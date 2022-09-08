@@ -1,4 +1,4 @@
-export enum ProductMediaType {
+export enum EProductMediaType {
   IMAGE = 'image',
   VIDEO = 'video',
 }

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { ProductModel } from '../enums/product-model.enum';
-import { ProductStatus } from '../enums/product-status.enum';
+import { EProductModel } from '../enums/product-model.enum';
+import { EProductStatus } from '../enums/product-status.enum';
 import { ProductCategory } from './product-category.schema';
 import {
   ProductDescription,
@@ -12,6 +12,11 @@ import {
   ProductDiscountSchema,
 } from './product-discount.schema';
 import { ProductMedia } from './product-media.schema';
+import {
+  ProductShockingSale,
+  ProductShockingSaleSchema,
+} from './product-shocking-sale.schema';
+import { ProductStatus } from './product-status.schema';
 
 export type ProductDocument = Product & mongoose.Document;
 
@@ -22,7 +27,7 @@ export class Product {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: ProductModel.PRODUCT_MEDIA,
+    ref: EProductModel.PRODUCT_MEDIA,
   })
   thumbnail: ProductMedia;
 
@@ -30,7 +35,7 @@ export class Product {
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: ProductModel.PRODUCT_MEDIA,
+        ref: EProductModel.PRODUCT_MEDIA,
       },
     ],
   })
@@ -56,18 +61,29 @@ export class Product {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: ProductModel.PRODUCT_CATEGORY,
+    ref: EProductModel.PRODUCT_CATEGORY,
   })
   category: ProductCategory;
 
-  @Prop({ type: String, enum: Object.values(ProductStatus) })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: EProductModel.PRODUCT_STATUS,
+  })
   status: ProductStatus;
+
+  @Prop({
+    type: ProductShockingSaleSchema,
+    required() {
+      return this.status === EProductStatus.ON_SHOCKING_SALE;
+    },
+  })
+  shockingSale: ProductShockingSale;
 
   @Prop({
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: ProductModel.PRODUCT,
+        ref: EProductModel.PRODUCT,
       },
     ],
   })
