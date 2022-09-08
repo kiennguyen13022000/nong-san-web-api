@@ -6,6 +6,8 @@ import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductMediaService } from './product-media.service';
 import { ProductModel } from '../enums/product-model.enum';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -22,8 +24,8 @@ export class ProductsService {
       description: { gallery: tmpDescriptionGallery },
     } = createProductDto;
 
-    const { thumbnail, productGallery, descriptionGallery } =
-      await this.productMediaService.create(
+    const [thumbnail, productGallery, descriptionGallery] =
+      await this.productMediaService.createIfNotExist(
         tmpThumbnail,
         tmpProductGallery,
         tmpDescriptionGallery,
@@ -43,25 +45,44 @@ export class ProductsService {
   }
 
   async findAll() {
-    const products = this.productModel
+    return this.productModel
       .find({})
-      .sort('createdAt')
-      .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
-    const count = this.productModel.estimatedDocumentCount();
-    return Promise.all([products, count]);
+      .select('_id name quantityInStock status')
+      .sort('createdAt');
+  }
+
+  async count() {
+    return this.productModel.estimatedDocumentCount();
   }
 
   async findAllExceptById(except: any[]) {
     return this.productModel
       .find({ _id: { $nin: except } })
       .select('_id name category thumbnail')
-      .populate('category');
+      .populate('category')
+      .lean();
   }
 
   async findOne(id: string) {
-    return this.productModel
+    const product = await this.productModel
       .findById(id)
       .populate(['thumbnail', 'category', 'gallery', 'description.gallery']);
+
+    if (!existsSync(join('public', product.thumbnail?.url))) {
+      product.thumbnail.url = 'No_Image_Available.jpg';
+    }
+    for (const media of product.gallery) {
+      if (!existsSync(join('public', media?.url))) {
+        media.url = 'No_Image_Available.jpg';
+      }
+    }
+    for (const media of product.description.gallery) {
+      if (!existsSync(join('public', media?.url))) {
+        media.url = 'No_Image_Available.jpg';
+      }
+    }
+
+    return product;
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
@@ -74,7 +95,7 @@ export class ProductsService {
     } = updateProductDto;
 
     const [thumbnail, productGallery, descriptionGallery] =
-      await this.productMediaService.addIfNotExist(
+      await this.productMediaService.createIfNotExist(
         updatedThumbnail,
         updatedProductGallery,
         updatedDescriptionGallery,

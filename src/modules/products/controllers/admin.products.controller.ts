@@ -21,6 +21,8 @@ import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
+import { existsSync } from 'fs';
+import { join } from 'path';
 
 @ApiTags('[Admin] Sản phẩm')
 @UseGuards(JwtAuthGuard)
@@ -53,7 +55,10 @@ export class AdminProductsController {
 
   @Get()
   async findAll(@Res() res: Response) {
-    const [products, count] = await this.productsService.findAll();
+    const [products, count] = await Promise.all([
+      this.productsService.findAll(),
+      this.productsService.count(),
+    ]);
     const response = new ResponseData(
       true,
       {
@@ -74,19 +79,8 @@ export class AdminProductsController {
   }
 
   @Get('related')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiQuery({
-    name: 'except',
-    required: false,
-    isArray: true,
-  })
-  async findRelatedProducts(
-    @Query('except') except: string[],
-    @Req() req,
-    @Res() res: Response,
-  ) {
-    const related = await this.productsService.findAllExceptById(except);
+  async findRelatedProducts(@Res() res: Response) {
+    const related = await this.productsService.findAll();
     const response = new ResponseData(true, related, null);
     res.status(HttpStatus.ACCEPTED).json(response);
   }
@@ -95,27 +89,14 @@ export class AdminProductsController {
   async findOne(@Param('id') id: string, @Res() res: Response) {
     const product = await this.productsService.findOne(id);
     const response = new ResponseData(true, product, null);
-
     res.status(HttpStatus.ACCEPTED).json(response);
   }
-
-  // @Patch(':id')
-  // async update(
-  //   @Param('id') id: string,
-  //   @Body() updateProductDto: UpdateProductDto,
-  // ) {
-  //   await this.productsService.findAndUpdate(id, updateProductDto);
-  //   const product = await this.productsService.findOne(id);
-  //   const response = new ResponseData(true, product, null);
-  //   return response;
-  // }
 
   @Put(':id')
   async update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    console.log('update');
     await this.productsService.findAndUpdate(id, updateProductDto);
     const product = await this.productsService.findOne(id);
     const response = new ResponseData(true, product, null);

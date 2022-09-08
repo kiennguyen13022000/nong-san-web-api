@@ -38,4 +38,5 @@ lerna-debug.log*
 .env
 
 # media directory
-/public
+/public/tmp
+/public/uploads

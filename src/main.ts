@@ -5,6 +5,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './helpers/http-exception-filter';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -12,6 +13,7 @@ async function bootstrap() {
     exposedHeaders: ['Content-Disposition'],
     credentials: true,
   });
+  app.use(helmet());
   app.setGlobalPrefix('/api/v1');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -19,7 +21,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Nông sản')
-    .setDescription('Dự án nông sản')
+    .setDescription('Các API cho dự án Nông sản')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
