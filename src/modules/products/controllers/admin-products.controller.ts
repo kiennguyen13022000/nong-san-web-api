@@ -15,6 +15,7 @@ import ResponseData from 'src/helpers/ResponseData';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
+import { ProductStatusService } from '../services/product-status.service';
 
 @ApiTags('[Admin] Sản phẩm')
 @UseGuards(JwtAuthGuard)
@@ -24,6 +25,7 @@ export class AdminProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly productCategoriesService: ProductCategoriesService,
+    private readonly productStatusService: ProductStatusService,
   ) {}
 
   @Post()
@@ -66,6 +68,12 @@ export class AdminProductsController {
   async findRelatedProducts() {
     const related = await this.productsService.findAll();
     return new ResponseData(true, related, null);
+  }
+
+  @Get('statuses')
+  async findStatuses() {
+    const statuses = await this.productStatusService.findAll();
+    return new ResponseData(true, statuses, null);
   }
 
   @Get(':id')

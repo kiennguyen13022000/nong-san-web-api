@@ -8,7 +8,6 @@ import { ProductMediaService } from './product-media.service';
 import { EProductModel } from '../enums/product-model.enum';
 import { existsSync } from 'fs';
 import { join } from 'path';
-import { EProductStatus } from '../enums/product-status.enum';
 import { ProductStatusService } from './product-status.service';
 
 @Injectable()
