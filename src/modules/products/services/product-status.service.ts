@@ -13,8 +13,8 @@ export class ProductStatusService {
   ) {}
 
   async findAll() {
-    const statuses = await this.productStatusModel.find({});
-    return statuses.map((status) => ({
+    const status = await this.productStatusModel.find({}).lean();
+    return status.map((status) => ({
       ...status,
       name: this.translate(status.name),
     }));

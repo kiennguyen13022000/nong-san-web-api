@@ -70,10 +70,10 @@ export class AdminProductsController {
     return new ResponseData(true, related, null);
   }
 
-  @Get('statuses')
-  async findStatuses() {
-    const statuses = await this.productStatusService.findAll();
-    return new ResponseData(true, statuses, null);
+  @Get('status')
+  async findStatus() {
+    const status = await this.productStatusService.findAll();
+    return new ResponseData(true, status, null);
   }
 
   @Get(':id')
