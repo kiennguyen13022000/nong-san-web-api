@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ProductDocument } from '../schemas/product.schema';
+import { Product, ProductDocument } from '../schemas/product.schema';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { ProductMediaService } from './product-media.service';
@@ -103,5 +103,11 @@ export class ProductsService {
 
   private isNewMedia(file: any) {
     return file.url.includes('tmp');
+  }
+
+  getProductListByStatus(status: string) {
+    return this.productModel.find({status: status})
+              .sort('createdAt')
+              .populate(['thumbnail', 'category']).exec();
   }
 }
