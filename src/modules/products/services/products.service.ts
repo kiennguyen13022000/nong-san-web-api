@@ -50,7 +50,7 @@ export class ProductsService {
     const products = await this.productModel
       .find({})
       .select('_id name quantityInStock status')
-      .sort('createdAt')
+      .sort('-createdAt')
       .populate(['status'])
       .lean();
 
