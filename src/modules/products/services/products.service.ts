@@ -110,4 +110,8 @@ export class ProductsService {
               .sort('createdAt')
               .populate(['thumbnail', 'category']).exec();
   }
+
+  getListBestSellingProducts() {
+    return this.productModel.find({}).sort({quantitySold: 'desc'}).populate(['thumbnail', 'category']).limit(10).exec();
+  }
 }
