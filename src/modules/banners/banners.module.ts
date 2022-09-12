@@ -2,27 +2,28 @@ import { Module } from '@nestjs/common';
 import { BannersService } from './services/banners.service';
 import { AdminBannersController } from './controllers/admin-banners.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { BannerModel } from './enums/banner-model.enum';
+import { EBannerModel } from './enums/banner-model.enum';
 import { BannerSchema } from './schemas/banner.schema';
 import { BannerImageSchema } from './schemas/banner-image.schema';
 import { FilesModule } from '../files/files.module';
 import { BannerImagesService } from './services/banner-images.service';
+import { CustomerBannersController } from './controllers/customer-banners.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       {
-        name: BannerModel.BANNER,
+        name: EBannerModel.BANNER,
         schema: BannerSchema,
       },
       {
-        name: BannerModel.BANNER_IMAGE,
+        name: EBannerModel.BANNER_IMAGE,
         schema: BannerImageSchema,
       },
     ]),
     FilesModule,
   ],
-  controllers: [AdminBannersController],
+  controllers: [AdminBannersController, CustomerBannersController],
   providers: [BannersService, BannerImagesService],
 })
 export class BannersModule {}

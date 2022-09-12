@@ -11,7 +11,7 @@ import {
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
-import ResponseData from 'src/helpers/ResponseData';
+import ResponseData from 'src/helpers/response-data';
 import { JwtAuthGuard } from 'src/modules/auth/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ProductCategoriesService } from '../services/product-categories.service';
@@ -94,13 +94,17 @@ export class AdminProductsController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    await this.productsService.remove(id);
-    return new ResponseData(
-      true,
-      {
-        message: 'Xóa sản phẩm thành công!',
-      },
-      null,
-    );
+    try {
+      await this.productsService.remove(id);
+      return new ResponseData(
+        true,
+        {
+          message: 'Xóa sản phẩm thành công!',
+        },
+        null,
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

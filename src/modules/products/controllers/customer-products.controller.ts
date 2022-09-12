@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import ResponseData from 'src/helpers/ResponseData';
+import ResponseData from 'src/helpers/response-data';
 import { EProductStatus } from '../enums/product-status.enum';
 import { ProductsService } from '../services/products.service';
 

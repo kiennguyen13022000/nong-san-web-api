@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
   IsArray,
   IsEnum,
@@ -8,6 +7,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
 import { EProductMediaType } from '../enums/product-media-type.enum';
@@ -18,7 +18,8 @@ export class ProductMediaDto {
   type: string;
 
   @ApiProperty()
-  @IsUrl()
+  // @IsUrl()
+  @IsString()
   url: string;
 
   @ApiProperty()
@@ -50,7 +51,6 @@ export class ProductDescriptionDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  // @Type(() => ProductMediaDto)
   gallery?: ProductMediaDto[];
 }
 
@@ -74,13 +74,11 @@ export class CreateProductDto {
 
   @ApiProperty({ type: () => ProductMediaDto, required: true })
   @ValidateNested()
-  // @Type(() => ProductMediaDto)
   thumbnail: ProductMediaDto;
 
   @ApiProperty({ type: () => [ProductMediaDto], required: true })
   @IsArray()
   @ValidateNested({ each: true })
-  // @Type(() => ProductMediaDto)
   gallery: ProductMediaDto[];
 
   @ApiProperty({
@@ -91,9 +89,9 @@ export class CreateProductDto {
   category: string;
 
   @ApiProperty()
+  // @ValidateIf((product) => product.status === '6319b0665e81d55881adc2df')
   @IsOptional()
   @ValidateNested()
-  // @Type(() => ShockingSaleDto)
   shockingSale?: ShockingSaleDto;
 
   @ApiProperty({
@@ -128,12 +126,10 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  // @Type(() => ProductDiscountDto)
   discounts?: ProductDiscountDto[];
 
   @ApiProperty({ type: () => ProductDescriptionDto, required: true })
   @ValidateNested()
-  // @Type(() => ProductDescriptionDto)
   description: ProductDescriptionDto;
 
   @ApiProperty()

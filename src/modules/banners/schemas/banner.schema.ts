@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { BannerModel } from '../enums/banner-model.enum';
+import { EBannerModel } from '../enums/banner-model.enum';
 import { BannerImage } from './banner-image.schema';
 
 export type BannerDocument = Banner & mongoose.Document;
@@ -12,12 +12,12 @@ export class Banner {
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: BannerModel.BANNER_IMAGE,
+    ref: EBannerModel.BANNER_IMAGE,
   })
   image: BannerImage;
 
   @Prop()
-  url: string;
+  ref: string;
 
   @Prop({ default: true })
   isShown: boolean;

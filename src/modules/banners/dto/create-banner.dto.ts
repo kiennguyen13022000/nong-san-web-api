@@ -1,11 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUrl, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  ValidateNested,
+} from 'class-validator';
 
 export class BannerImageDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
-  @IsString()
+  @IsUrl()
   url: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  _id?: string;
 }
 
 export class CreateBannerDto {
@@ -14,12 +25,12 @@ export class CreateBannerDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ type: () => [BannerImageDto] })
+  @ApiProperty({ type: () => BannerImageDto })
   @ValidateNested()
-  images: BannerImageDto[];
+  image: BannerImageDto;
 
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsUrl()
-  url: string;
+  ref: string;
 }

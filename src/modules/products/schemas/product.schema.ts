@@ -90,4 +90,6 @@ export class Product {
   relatedProducts?: Product[];
 }
 
-export const ProductSchema = SchemaFactory.createForClass(Product);
+const ProductSchema = SchemaFactory.createForClass(Product);
+ProductSchema.index({ name: 'text' }, { default_language: 'none' });
+export { ProductSchema };

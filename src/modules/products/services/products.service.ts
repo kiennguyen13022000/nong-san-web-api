@@ -9,6 +9,7 @@ import { EProductModel } from '../enums/product-model.enum';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { ProductStatusService } from './product-status.service';
+import { NOT_FOUND_IMAGE } from 'src/configs/constants';
 
 @Injectable()
 export class ProductsService {
@@ -80,16 +81,16 @@ export class ProductsService {
       .lean();
 
     if (!existsSync(join('public', product.thumbnail?.url))) {
-      product.thumbnail.url = 'No_Image_Available.jpg';
+      product.thumbnail.url = NOT_FOUND_IMAGE;
     }
     for (const media of product.gallery) {
       if (!existsSync(join('public', media?.url))) {
-        media.url = 'No_Image_Available.jpg';
+        media.url = NOT_FOUND_IMAGE;
       }
     }
     for (const media of product.description.gallery) {
       if (!existsSync(join('public', media?.url))) {
-        media.url = 'No_Image_Available.jpg';
+        media.url = NOT_FOUND_IMAGE;
       }
     }
 
@@ -136,7 +137,22 @@ export class ProductsService {
   }
 
   async remove(id: string) {
-    return this.productModel.findByIdAndRemove(id);
+    const {
+      _id,
+      thumbnail,
+      gallery: productGallery,
+      description: { gallery: descriptionGallery },
+    } = await this.productModel
+      .findById(id)
+      .populate(['thumbnail', 'gallery', 'description.gallery']);
+    return await Promise.all([
+      this.productModel.deleteOne({ _id }),
+      this.productMediaService.removeMedia([
+        thumbnail,
+        ...productGallery,
+        ...descriptionGallery,
+      ]),
+    ]);
   }
 
   async getProductListByStatus(status: string) {
