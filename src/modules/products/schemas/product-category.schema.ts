@@ -11,7 +11,3 @@ export class ProductCategory {
 
 export const ProductCategorySchema =
   SchemaFactory.createForClass(ProductCategory);
-
-
-
-  
