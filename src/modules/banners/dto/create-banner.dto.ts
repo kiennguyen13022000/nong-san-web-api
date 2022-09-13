@@ -13,7 +13,7 @@ export class BannerImageDto {
   @IsUrl()
   url: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   _id?: string;

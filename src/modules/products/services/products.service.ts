@@ -77,6 +77,7 @@ export class ProductsService {
         'gallery',
         'description.gallery',
         'status',
+        'relatedProducts',
       ])
       .lean();
 
