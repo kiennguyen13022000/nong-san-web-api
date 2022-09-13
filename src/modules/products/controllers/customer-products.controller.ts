@@ -31,21 +31,44 @@ export class CustomerProductsController {
       null,
     );
 
-    return response;
-  }
+    @Get('list-all')
+    @ApiResponse({status: 200, description:'Lấy dữ liệu thành công'})
+    @ApiOperation({
+        summary: 'Lấy tất cả sản phẩm',
+        description: 'Lấy tất cả sản phẩm',
+        operationId: 'findAll'
+    })
+    @ApiResponse({status: 200, description:'Lấy dữ liệu thành công'})
+    async findAll() {
+        const [products] = await this.productService.findAll();
+        const response = new ResponseData(
+          true,
+          {
+            products
+          },
+          null,
+        );
 
-  @Get('list-all')
-  @ApiResponse({ status: 200, description: 'Lấy dữ liệu thành công' })
-  async findAll() {
-    const products = await this.productService.findAll();
-    const response = new ResponseData(
-      true,
-      {
-        products,
-      },
-      null,
-    );
+        return response;
+    }
 
-    return response;
-  }
+    @Get('best-selling')
+    @ApiResponse({status: 200, description:'Lấy dữ liệu thành công'})
+    @ApiOperation({
+        summary: 'Lấy danh sách sản phẩm bán chạy',
+        description: 'Lấy danh sách sản phẩm bán chạy',
+        operationId: 'getListBestSellingProducts'
+    })
+    async getListBestSellingProducts() {
+        const [products] = await this.productService.getListBestSellingProducts();
+        const response = new ResponseData(
+          true,
+          {
+            products
+          },
+          null,
+        );
+
+        return response;
+    }
 }
