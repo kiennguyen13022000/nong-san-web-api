@@ -52,9 +52,6 @@ export class CustomerProductsController {
           null,
         );
 
-        return response;
-    }
-
     @Get('best-selling')
     @ApiResponse({status: 200, description:'Lấy dữ liệu thành công'})
     @ApiOperation({

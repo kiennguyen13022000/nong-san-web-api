@@ -94,17 +94,13 @@ export class AdminProductsController {
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
-    try {
-      await this.productsService.remove(id);
-      return new ResponseData(
-        true,
-        {
-          message: 'Xóa sản phẩm thành công!',
-        },
-        null,
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    await this.productsService.remove(id);
+    return new ResponseData(
+      true,
+      {
+        message: 'Xóa sản phẩm thành công!',
+      },
+      null,
+    );
   }
 }
