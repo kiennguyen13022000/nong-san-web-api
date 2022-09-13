@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import ResponseData from 'src/helpers/ResponseData';
 import { ProductStatus } from '../enums/product-status.enum';
 import { ProductsService } from '../services/products.service';
@@ -73,5 +73,10 @@ export class CustomerProductsController {
         );
 
         return response;
+    }
+
+    @Get('')
+    searchProductByName() {
+
     }
 }
