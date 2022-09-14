@@ -77,6 +77,7 @@ export class ProductsService {
         'gallery',
         'description.gallery',
         'status',
+        'relatedProducts',
       ])
       .lean();
 
@@ -174,6 +175,11 @@ export class ProductsService {
   }
 
   getListBestSellingProducts() {
-    return this.productModel.find({}).sort({quantitySold: 'desc'}).populate(['thumbnail', 'category']).limit(10).exec();
+    return this.productModel
+      .find({})
+      .sort({ quantitySold: 'desc' })
+      .populate(['thumbnail', 'category'])
+      .limit(10)
+      .exec();
   }
 }
