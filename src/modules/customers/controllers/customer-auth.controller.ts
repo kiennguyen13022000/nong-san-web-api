@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import ResponseData from 'src/helpers/ResponseData';
+import ResponseData from 'src/helpers/response-data';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { CustomerAuthDto } from '../dto/customer-auth.dto';
 import { CustomerAuthService } from '../services/customer-auth.service';

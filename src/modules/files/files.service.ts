@@ -42,7 +42,7 @@ export class FilesService {
       if (!existsSync(path)) {
         throw new HttpException(
           {
-            error: 'Xóa file thất bại',
+            error: `Xóa file ${file} thất bại`,
           },
           HttpStatus.NOT_FOUND,
         );
@@ -52,7 +52,7 @@ export class FilesService {
     } catch (error) {
       throw new HttpException(
         {
-          error: 'Xóa file thất bại',
+          error: `Xóa file ${file} thất bại`,
         },
         HttpStatus.NOT_FOUND,
       );

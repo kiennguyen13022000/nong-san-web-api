@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import ResponseData from 'src/helpers/ResponseData';
-import { ProductStatus } from '../enums/product-status.enum';
+import ResponseData from 'src/helpers/response-data';
+import { EProductStatus } from '../enums/product-status.enum';
 import { ProductsService } from '../services/products.service';
 
 @ApiTags('[Frontend][Customer][Product] Api liên quan đến sản phẩm')
@@ -18,7 +18,7 @@ export class CustomerProductsController {
     })
     @ApiQuery({
         name: 'status',
-        enum: ProductStatus
+        enum: EProductStatus
     })
     async getProductListByStatus(@Query('status') status: string ) {
         const products = await this.productService.getProductListByStatus(status);
