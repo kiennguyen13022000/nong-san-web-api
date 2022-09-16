@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProductMediaService } from './product-media.service';
+import { ProductMediaService } from '../services/product-media.service';
 
 describe('ProductMediaService', () => {
   let service: ProductMediaService;

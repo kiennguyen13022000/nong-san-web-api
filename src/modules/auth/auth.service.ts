@@ -35,4 +35,8 @@ export class AuthService {
       username: user.username,
     };
   }
+
+  async loginCustomer(user: any) {
+    return this.jwtService.sign(user);
+  }
 }

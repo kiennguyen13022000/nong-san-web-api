@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import ResponseData from 'src/helpers/ResponseData';
-import { ProductStatus } from '../enums/product-status.enum';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import ResponseData from 'src/helpers/response-data';
+import { EProductStatus } from '../enums/product-status.enum';
 import { ProductsService } from '../services/products.service';
 
 @ApiTags('[Frontend][Customer][Product] Api liên quan đến sản phẩm')
@@ -18,7 +18,7 @@ export class CustomerProductsController {
     })
     @ApiQuery({
         name: 'status',
-        enum: ProductStatus
+        enum: EProductStatus
     })
     async getProductListByStatus(@Query('status') status: string ) {
         const products = await this.productService.getProductListByStatus(status);
@@ -72,6 +72,30 @@ export class CustomerProductsController {
           null,
         );
 
+        return response;
+    }
+
+    @Get('search')
+    @ApiResponse({status: 200, description:'Lấy dữ liệu thành công'})
+    @ApiOperation({
+        summary: 'Tìm kiếm sản phẩm',
+        description: 'Tìm kiếm sản phẩm',
+        operationId: 'searchProductByName'
+    })
+    @ApiQuery({
+        name: 'name'
+    })
+    async searchProductByName(@Query('name') query: string ) {
+        const products = await this.productService.searchProductByName(query);
+
+        const response = new ResponseData(
+            true,
+            {
+              products
+            },
+            null,
+          );
+  
         return response;
     }
 }

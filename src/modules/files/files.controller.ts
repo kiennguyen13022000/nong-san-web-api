@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { MAXIMUM_NUMBER_FILE_UPLOAD } from 'src/configs/constants';
-import ResponseData from 'src/helpers/ResponseData';
+import ResponseData from 'src/helpers/response-data';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { FilesUploadDto } from './dto/upload-multiple.dto';
 import { UploadSingleDto } from './dto/upload-single.dto';

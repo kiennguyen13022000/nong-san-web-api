@@ -5,7 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AdminModule } from './modules/admin/admin.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { BannersModule } from './modules/banners/banners.module';
 import { ProductsModule } from './modules/products/products.module';
+import { CustomersModule } from './modules/customers/customers.module';
 import { BaseModule } from './modules/base/base.module';
 
 @Module({
@@ -18,6 +20,8 @@ import { BaseModule } from './modules/base/base.module';
     ProductsModule,
     AuthModule,
     BaseModule,
+    CustomersModule,
+    BannersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

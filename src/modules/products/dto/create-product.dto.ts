@@ -6,40 +6,62 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUrl,
+  ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { ProductStatus } from '../enums/product-status.enum';
+import { EProductMediaType } from '../enums/product-media-type.enum';
 
 export class ProductMediaDto {
-  @ApiProperty()
+  @ApiProperty({ enum: Object.values(EProductMediaType) })
+  @IsEnum(Object.values(EProductMediaType))
   type: string;
 
   @ApiProperty()
+  // @IsUrl()
+  @IsString()
   url: string;
 
   @ApiProperty()
   @IsOptional()
+  @IsString()
   _id?: string;
 }
 
 export class ProductDiscountDto {
   @ApiProperty()
+  @IsNumber()
   percentOff: number;
 
   @ApiProperty()
+  @IsNumber()
   quantity: number;
 
   @ApiProperty()
+  @IsNumber()
   lastsFor: number;
 }
 
 export class ProductDescriptionDto {
   @ApiProperty()
+  @IsString()
   content: string;
 
   @ApiProperty({ type: () => [ProductMediaDto] })
-  @ValidateNested()
-  gallery: ProductMediaDto[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  gallery?: ProductMediaDto[];
+}
+
+export class ShockingSaleDto {
+  @ApiProperty()
+  @IsNumber()
+  newPrice: number;
+
+  @ApiProperty()
+  @IsNumber()
+  quantity: number;
 }
 
 export class CreateProductDto {
@@ -56,7 +78,7 @@ export class CreateProductDto {
 
   @ApiProperty({ type: () => [ProductMediaDto], required: true })
   @IsArray()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   gallery: ProductMediaDto[];
 
   @ApiProperty({
@@ -65,6 +87,12 @@ export class CreateProductDto {
   @IsNotEmpty()
   @IsString()
   category: string;
+
+  @ApiProperty()
+  // @ValidateIf((product) => product.status === '6319b0665e81d55881adc2df')
+  @IsOptional()
+  @ValidateNested()
+  shockingSale?: ShockingSaleDto;
 
   @ApiProperty({
     required: true,
@@ -89,16 +117,15 @@ export class CreateProductDto {
 
   @ApiProperty({
     required: true,
-    enum: Object.values(ProductStatus),
   })
   @IsNotEmpty()
-  @IsEnum(Object.values(ProductStatus))
-  status: ProductStatus;
+  @IsString()
+  status: string;
 
   @ApiProperty({ type: () => [ProductDiscountDto] })
   @IsOptional()
   @IsArray()
-  @ValidateNested()
+  @ValidateNested({ each: true })
   discounts?: ProductDiscountDto[];
 
   @ApiProperty({ type: () => ProductDescriptionDto, required: true })
@@ -106,6 +133,7 @@ export class CreateProductDto {
   description: ProductDescriptionDto;
 
   @ApiProperty()
+  @IsOptional()
   @IsArray()
-  relatedProducts: string[];
+  relatedProducts?: string[];
 }

@@ -23,13 +23,7 @@ export class BaseModel {
      * createOrUpdate
      */
     public async createOrUpdate(payload: Object, where: Object) {
-        const obj = await this.model.exists(where);
-
-        if (!obj) {
-            payload = {...payload, ...where};
-        }
-
-        return this.model.updateOne(where, payload, { upsert: true });
+        return this.model.updateOne(where, payload, { new: true, upsert: true });
     }
 
     /**
@@ -60,5 +54,11 @@ export class BaseModel {
         return await this.model.findOne(where).select(select).populate(populate).exec();
     }
 
+    /**
+     * exists
+     */
+    public exists(where: Object) {
+        return this.model.exists(where);
+    }
 
 }

@@ -3,7 +3,7 @@ import { BaseModel } from './models/base.model';
 import { BaseService } from './services/base.service';
 
 @Module({
-    providers: [BaseService, BaseModel],
+    providers: [BaseModel, BaseService],
     exports: [BaseService, BaseModel]
 })
 export class BaseModule {}

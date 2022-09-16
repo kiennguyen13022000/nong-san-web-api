@@ -1,10 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { BaseModel } from "../models/base.model";
 
 @Injectable()
 export class BaseService {
-    protected baseModel: BaseModel;
+ 
+    protected baseModel: BaseModel = new BaseModel();
+
+    protected setModel(model: Model<any>) {
+        this.baseModel.model = model;
+    }
 
     /**
      * create
@@ -51,8 +56,14 @@ export class BaseService {
     /**
      * name
      */
-    public findOneWhere(select: Array<string> = [], where: Object, populate: any = null) {
+    public findOneWhere(select: Array<string> = [], where: Object, populate?: any) {
         return this.baseModel.findOneWhere(select, where, populate);
     }
     
+    /**
+     * exists
+     */
+    public exists(where: Object) {
+        return this.baseModel.exists(where);
+    }
 }
