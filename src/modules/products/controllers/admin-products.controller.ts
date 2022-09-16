@@ -64,15 +64,13 @@ export class AdminProductsController {
   @ApiOkResponse({ description: 'Lấy danh sách sản phẩm thành công' })
   @ApiBadRequestResponse({ description: 'Lấy danh sách sản phẩm thất bại' })
   async findAll() {
-    const [products, count] = await Promise.all([
-      this.productsService.findAll(),
-      this.productsService.count(),
-    ]);
+    const products = await this.productsService.findAll();
+    const count = products.length;
     return new ResponseData(
       true,
       {
-        products,
         totalDocs: count,
+        products,
       },
       null,
     );
@@ -156,8 +154,13 @@ export class AdminProductsController {
     @Body() updateProductDto: UpdateProductDto,
   ) {
     await this.productsService.findAndUpdate(id, updateProductDto);
-    const product = await this.productsService.findOne(id);
-    return new ResponseData(true, product, null);
+    return new ResponseData(
+      true,
+      {
+        message: 'Cập nhật sản phẩm thành công!',
+      },
+      null,
+    );
   }
 
   @Delete(':id')
