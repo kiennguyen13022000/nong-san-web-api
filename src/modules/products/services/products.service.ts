@@ -47,13 +47,14 @@ export class ProductsService {
     return this.productModel.create(newProduct);
   }
 
-  findAll() {
-    const findAllQuery = this.productModel.find({});
-    return findAllQuery;
-  }
-
-  async count() {
-    return this.productModel.estimatedDocumentCount();
+  async findAll() {
+    return this.productModel
+      .find({})
+      .sort('-createdAt')
+      .select(
+        '_id name thumbnail weight price status quantitySold quantityInStock',
+      )
+      .populate(['thumbnail', 'status']);
   }
 
   async findOne(id: string) {
@@ -138,30 +139,21 @@ export class ProductsService {
     ]);
   }
 
-  async getProductListByStatus(status: string) {
-    const products = await this.productModel
-      .find({ status })
-      .sort('createdAt')
+  async getProductListByStatus(statusId: string) {
+    return this.productModel
+      .find({ status: statusId })
+      .sort('-createdAt')
       .select(
         '_id name thumbnail weight price status quantitySold quantityInStock',
       )
       .populate(['thumbnail', 'status']);
-
-    return products.map((product) => ({
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    }));
   }
 
-  getListBestSellingProducts() {
+  async getListBestSellingProducts() {
     return this.productModel
       .find({})
       .sort({ quantitySold: 'desc' })
       .populate(['thumbnail', 'category'])
-      .limit(10)
-      .exec();
+      .limit(10);
   }
 }
