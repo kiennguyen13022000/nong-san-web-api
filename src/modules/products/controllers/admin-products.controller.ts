@@ -65,13 +65,21 @@ export class AdminProductsController {
   @ApiBadRequestResponse({ description: 'Lấy danh sách sản phẩm thất bại' })
   async findAll() {
     const [products, count] = await Promise.all([
-      this.productsService.findAll(),
+      this.productsService
+        .findAll()
+        .select('_id name status quantityInStock')
+        .sort('-createdAt')
+        .populate(['status'])
+        .lean(),
       this.productsService.count(),
     ]);
     return new ResponseData(
       true,
       {
-        products,
+        products: products.map((product) => ({
+          ...product,
+          status: this.productStatusService.translate(product.status.name),
+        })),
         totalDocs: count,
       },
       null,

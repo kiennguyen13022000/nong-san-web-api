@@ -47,21 +47,9 @@ export class ProductsService {
     return this.productModel.create(newProduct);
   }
 
-  async findAll() {
-    const products = await this.productModel
-      .find({})
-      .select('_id name quantityInStock status')
-      .sort('-createdAt')
-      .populate(['status'])
-      .lean();
-
-    return products.map((product) => ({
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    }));
+  findAll() {
+    const findAllQuery = this.productModel.find({});
+    return findAllQuery;
   }
 
   async count() {
@@ -95,13 +83,7 @@ export class ProductsService {
       }
     }
 
-    return {
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    };
+    return product;
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
