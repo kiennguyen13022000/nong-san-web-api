@@ -12,6 +12,7 @@ async function bootstrap() {
   app.enableCors({
     exposedHeaders: ['Content-Disposition'],
     credentials: true,
+    origin: true,
   });
   app.use(helmet());
   app.setGlobalPrefix('/api/v1');
