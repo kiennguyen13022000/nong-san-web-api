@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NOT_FOUND_IMAGE } from 'src/configs/constants';
-import { FilesService } from 'src/modules/files/files.service';
+import { FilesService } from 'src/modules/files/services/files.service';
 import { ProductMediaDto } from '../dto/create-product.dto';
 import { EProductModel } from '../enums/product-model.enum';
 import { ProductMediaDocument } from '../schemas/product-media.schema';

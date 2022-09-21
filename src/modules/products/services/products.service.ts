@@ -48,24 +48,13 @@ export class ProductsService{
   }
 
   async findAll() {
-    const products = await this.productModel
+    return this.productModel
       .find({})
-      .select('_id name quantityInStock status')
       .sort('-createdAt')
-      .populate(['status'])
-      .lean();
-
-    return products.map((product) => ({
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    }));
-  }
-
-  async count() {
-    return this.productModel.estimatedDocumentCount();
+      .select(
+        '_id name thumbnail weight price status quantitySold quantityInStock',
+      )
+      .populate(['thumbnail', 'status']);
   }
 
   async findOne(id: string) {
@@ -77,6 +66,7 @@ export class ProductsService{
         'gallery',
         'description.gallery',
         'status',
+        'relatedProducts',
       ])
       .lean();
 
@@ -94,13 +84,7 @@ export class ProductsService{
       }
     }
 
-    return {
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    };
+    return product;
   }
 
   async findAndUpdate(id: string, updateProductDto: UpdateProductDto) {
@@ -155,26 +139,22 @@ export class ProductsService{
     ]);
   }
 
-  async getProductListByStatus(status: string) {
-    const products = await this.productModel
-      .find({ status })
-      .sort('createdAt')
+  async getProductListByStatus(statusId: string) {
+    return this.productModel
+      .find({ status: statusId })
+      .sort('-createdAt')
       .select(
         '_id name thumbnail weight price status quantitySold quantityInStock',
       )
       .populate(['thumbnail', 'status']);
-
-    return products.map((product) => ({
-      ...product,
-      status: {
-        ...product.status,
-        name: this.productStatusService.translate(product.status.name),
-      },
-    }));
   }
 
-  getListBestSellingProducts() {
-    return this.productModel.find({}).sort({quantitySold: 'desc'}).populate(['thumbnail', 'category']).limit(10).exec();
+  async getListBestSellingProducts() {
+    return this.productModel
+      .find({})
+      .sort({ quantitySold: 'desc' })
+      .populate(['thumbnail', 'category'])
+      .limit(10);
   }
 
   searchProductByName(query: string) {
@@ -188,8 +168,4 @@ export class ProductsService{
         .exec();
   }
 
-  // private createQuery(query: string) {
-  //     let query = '';
-
-  // }
 }

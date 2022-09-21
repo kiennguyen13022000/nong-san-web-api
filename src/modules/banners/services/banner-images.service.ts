@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { NOT_FOUND_IMAGE } from 'src/configs/constants';
-import { FilesService } from 'src/modules/files/files.service';
+import { FilesService } from 'src/modules/files/services/files.service';
 import { EBannerModel } from '../enums/banner-model.enum';
 import { BannerImageDocument } from '../schemas/banner-image.schema';
 
@@ -36,7 +36,7 @@ export class BannerImagesService {
     ]);
   }
 
-  isNewImage(image: any) {
+  private isNewImage(image: any) {
     return image.url.includes('tmp');
   }
 }

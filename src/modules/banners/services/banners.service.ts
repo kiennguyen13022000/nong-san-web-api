@@ -78,6 +78,12 @@ export class BannersService {
   }
 
   async remove(id: string) {
-    return this.bannerModel.findByIdAndRemove(id);
+    const { _id, image } = await this.bannerModel
+      .findById(id)
+      .populate('image');
+    return Promise.all([
+      this.bannerModel.deleteOne({ _id }),
+      this.bannerImagesService.remove(image),
+    ]);
   }
 }
