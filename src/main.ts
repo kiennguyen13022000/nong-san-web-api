@@ -14,7 +14,7 @@ async function bootstrap() {
     credentials: true,
     origin: true,
   });
-  app.use(helmet());
+  app.use(helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }));
   app.setGlobalPrefix('/api/v1');
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
