@@ -21,7 +21,7 @@ export class BaseService {
     /**
      * update
      */
-    public update(payload: Object, id: Types.ObjectId) {
+    public update(payload: Object, id: string) {
         return this.baseModel.update(payload, id);
     }
 
@@ -35,14 +35,14 @@ export class BaseService {
     /**
      * delete
      */
-    public delete(id: Types.ObjectId) {
+    public delete(id: string) {
         return this.baseModel.delete(id);
     }
 
     /**
      * findById
      */
-    public findById(select: Array<string> = [], id: Types.ObjectId, populate: any = null) {
+    public findById(select: Array<string> = [], id: string, populate: any = null) {
         return this.baseModel.findById(select, id, populate);
     }
 

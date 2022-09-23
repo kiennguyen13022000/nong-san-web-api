@@ -15,8 +15,8 @@ export class BaseModel {
     /**
      * update
      */
-    public update(payload: Object, id: Types.ObjectId) {
-        return this.model.findByIdAndUpdate(id, payload).exec();
+    public update(payload: Object, id: string) {
+        return this.model.findByIdAndUpdate(id, payload, { new: true }).exec();
     }
 
     /**
@@ -29,14 +29,14 @@ export class BaseModel {
     /**
      * delete
      */
-    public async delete(id: Types.ObjectId) {
+    public async delete(id: string) {
         return await this.model.findByIdAndDelete(id).exec();
     }
 
     /**
      * findById
      */
-    public async findById(select: Array<string>, id: Types.ObjectId, populate: any = null) {
+    public async findById(select: Array<string>, id: string, populate: any = null) {
         return await this.model.findById(id).select(select).populate(populate).exec();
     }
 
